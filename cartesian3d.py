@@ -48,6 +48,7 @@ class Vector():
         self.name = name
         self.determinent = self._get_determinent()
         self.norme = self._get_norme()
+        self.drawn = False
 
     def _get_components(self, coordinates):
         """Return components of the vector in the space."""
@@ -85,7 +86,8 @@ class Cartesian():
         self.fig = plt.figure()
         self.ax1 = self.fig.add_subplot(111, projection='3d')
         self.max_coordinates = [[0, 0], [0, 0], [0, 0]]
-        self.vector_list = []
+        self.vector_list = {}
+        self.additions_list = {}
 
         if trans_matrix == '':
             matrix_units_vectors = MATRIX_UNITS_VECTORS
@@ -109,9 +111,10 @@ class Cartesian():
             all_vectors.append(vector)
      
         for vector in vector_list:
-            all_vectors.append(vector.coordinates)
-            for i in range(3):
-                all_vectors.append(vector.components[i])
+            if vector.drawn == True:
+                all_vectors.append(vector.coordinates)
+                for i in range(3):
+                    all_vectors.append(vector.components[i])
 
         for vector in all_vectors:
             plus = max(self.max_coordinates[1])
@@ -180,7 +183,14 @@ class Cartesian():
         self.ax1.set_zlim(size[2])
 
         """Draw the dotes axis."""
-        arrow_prop_dict = dict(mutation_scale=10, arrowstyle='-', linestyle='--', shrinkA=0, shrinkB=0, alpha=0.2)
+        arrow_prop_dict = dict(
+            mutation_scale=10,
+            arrowstyle='-',
+            linestyle='--',
+            shrinkA=0,
+            shrinkB=0,
+            alpha=0.2
+            )
         a = Arrow3D(size[0], [0, 0], [0, 0], **arrow_prop_dict)
         self.ax1.add_artist(a)
         a = Arrow3D([0, 0], size[1], [0, 0], **arrow_prop_dict)
@@ -197,8 +207,18 @@ class Cartesian():
 
     def _draw_units_vector(self, matrix_units_vectors):
         """Draw units vectors."""
-        arrow_prop_dict = dict(mutation_scale=20, arrowstyle='->', shrinkA=0, shrinkB=0)
-        self._draw_components_vectors(matrix_units_vectors, arrow_prop_dict, unit = True)
+        arrow_prop_dict = dict(
+            mutation_scale=20,
+            arrowstyle='->',
+            shrinkA=0,
+            shrinkB=0
+            )
+
+        self._draw_components_vectors(
+            matrix_units_vectors,
+            arrow_prop_dict,
+            unit=True
+            )
 
         """Label unit vectors."""
         # delta_size = abs(self.size[0][0]) + abs(self.size[0][1])
@@ -209,44 +229,160 @@ class Cartesian():
 
     def _draw_components_vectors(self, vector_matrix, arrow_prop_dict, unit=0):
         """Draw units vectors."""
-        arrow_prop_dict = dict(mutation_scale=20, arrowstyle='->', shrinkA=0, shrinkB=0)
+        arrow_prop_dict = dict(
+            mutation_scale=20,
+            arrowstyle='->',
+            shrinkA=0,
+            shrinkB=0
+            )
+
         if unit is True:
-            color = ['r','b', 'g']
+            color = ['r', 'b', 'g']
         else:
             color = ['k', 'k', 'k']
             arrow_prop_dict['linestyle'] = '--'
             arrow_prop_dict['alpha'] = 0.2
 
-        a = ArrowFromOrigin(vector_matrix[0], **arrow_prop_dict, color=color[0])
+        a = ArrowFromOrigin(
+            vector_matrix[0],
+            **arrow_prop_dict,
+            color=color[0]
+            )
         self.ax1.add_artist(a)
-        a = ArrowFromOrigin(vector_matrix[1], **arrow_prop_dict, color=color[1])
+        a = ArrowFromOrigin(
+            vector_matrix[1],
+            **arrow_prop_dict,
+            color=color[1]
+            )
         self.ax1.add_artist(a)
-        a = ArrowFromOrigin(vector_matrix[2], **arrow_prop_dict, color=color[2])
+        a = ArrowFromOrigin(
+            vector_matrix[2],
+            **arrow_prop_dict,
+            color=color[2]
+            )
         self.ax1.add_artist(a)
 
     def new_vector(self, vector_coordinates, name=''):
         """Add a vector object."""
-        vector = Vector(units_vectors=self.matrix_units_vectors, coordinates=vector_coordinates, name=name)
-        self.vector_list.append(vector)
+        if name == '':
+            name = 'V{}'.format(len(self.vector_list)+1)
+        else:
+            pass
+
+        vector = Vector(
+            units_vectors=self.matrix_units_vectors,
+            coordinates=vector_coordinates,
+            name=name
+            )
+        self.vector_list[name] = vector
         return vector
 
-    def draw_vector(self, vector_coordinates, color='k', det=False, comp=False):
+    def draw_vector(self, vector_name, color='k', det=False, comp=False, fade=False, added=False, no_name=False):
         """Draw units vectors."""
-        name = 'V{}'.format(len(self.vector_list)+1)
-        vector = self.new_vector(vector_coordinates, name)
+        vector = ''
+        alpha = True
+        linestyle = '-'
+        arrowstyle='-|>'
 
-        arrow_prop_dict = dict(mutation_scale=20, arrowstyle='-|>', shrinkA=0, shrinkB=0, color=color)
+        try:
+            vector = self.vector_list[vector_name]
+        except:
+            raise EnvironmentError
+
+        if fade is True:
+            alpha = 0.5
+            linestyle='--'
+            arrowstyle='->'
+
+        arrow_prop_dict = dict(
+            mutation_scale=20,
+            arrowstyle=arrowstyle,
+            shrinkA=0,
+            shrinkB=0,
+            color=color,
+            linestyle=linestyle,
+            alpha=alpha
+            )
         a = ArrowFromOrigin(vector.coordinates, **arrow_prop_dict)
         self.ax1.add_artist(a)
 
         x, y, z = vector.coordinates
-        name_n_coord = name + ' ' + str(vector.coordinates)
-        self.ax1.text(x, y, z, name_n_coord)
+        name_n_coord = vector.name + ' ' + str(vector.coordinates)
+        if no_name is True:
+            pass
+        else:
+            self.ax1.text(x, y, z, name_n_coord)
 
+        if added is True:
+            self.draw_added_vector(vector)
         if comp is True:
             self._draw_components_vectors(vector.components, arrow_prop_dict)
         if det is True:
             self._draw_determinent(vector.components)
+        self.vector_list[vector_name].drawn = True
+
+    def draw_added_vector(self, vector):
+        """Draw component for vector addition."""
+        components = []
+        try:
+            components = self.additions_list[vector.name]
+        except:
+            raise EnvironmentError
+
+        v1 = self.vector_list[components[0]]
+        v2 = self.vector_list[components[1]]
+
+        arrow_prop_dict = dict(
+            mutation_scale=20,
+            arrowstyle='->',
+            linestyle='--',
+            shrinkA=0,
+            shrinkB=0,
+            color='k',
+            alpha=0.5
+            )
+        a = Arrow3D(
+                [v1.coordinates[0], v1.coordinates[0] + v2.coordinates[0]],
+                [v1.coordinates[1], v1.coordinates[2] + v2.coordinates[1]],
+                [v1.coordinates[2], v1.coordinates[2] + v2.coordinates[2]],
+                **arrow_prop_dict
+                 )
+        if v1.drawn is False:
+            if v2.drawn is True:
+                self.draw_vector(v2.name, no_name=True, fade=True, color='k')
+                a = Arrow3D(
+                    [v2.coordinates[0], v1.coordinates[0] + v2.coordinates[0]],
+                    [v2.coordinates[1], v1.coordinates[2] + v2.coordinates[1]],
+                    [v2.coordinates[2], v1.coordinates[2] + v2.coordinates[2]],
+                    **arrow_prop_dict
+                    )
+            else:
+                self.draw_vector(v1.name, no_name=True, fade=True, color='k')
+
+        self.ax1.add_artist(a)
+
+    def add_vector(self, v1, v2):
+        """Add 2 vector to create a third vector."""
+        v1_coordinates = []
+        v2_coordinates = []
+        v3_coordinates = []
+
+        try:
+            v1_coordinates = self.vector_list[v1].coordinates
+            v2_coordinates = self.vector_list[v2].coordinates
+        except:
+            raise  EnvironmentError
+        
+        for value in range(len(v1_coordinates)):
+            v3_coordinates.append(
+                v1_coordinates[value] + v2_coordinates[value])
+        
+        name = '{} + {}'.format(
+            self.vector_list[v1].name, 
+            self.vector_list[v2].name)
+        self.new_vector(v3_coordinates, name=name)
+
+        self.additions_list[name] = [v1, v2]
 
     def _print_vector_info(self):
         """Print vector info in the terminal."""
@@ -260,9 +396,13 @@ Units vectors :
     î'  =        {}
     ĵ'  =        {}
     k'  =        {}
-        '''.format(self.matrix_units_vectors[0], self.matrix_units_vectors[1], self.matrix_units_vectors[2]))
+        '''.format(
+            self.matrix_units_vectors[0], 
+            self.matrix_units_vectors[1], 
+            self.matrix_units_vectors[2])
+            )
 
-        for vector in self.vector_list:
+        for vector in self.vector_list.values():
             vector_info = [
                 vector.name,
                 vector.coordinates,
@@ -280,11 +420,19 @@ Vector components ĵ =   {}
 Vector components k =   {}
 Vector determinent  =   {}
 -----------------------------------------
-        '''.format(vector_info[0],vector_info[1],vector_info[2],vector_info[3][0],vector_info[3][1],vector_info[3][2],vector_info[4]))
+        '''.format(
+                vector_info[0],
+                vector_info[1],
+                vector_info[2],
+                vector_info[3][0],
+                vector_info[3][1],
+                vector_info[3][2],
+                vector_info[4])
+                )
 
     def show(self):
         """Show the cartesian space in maplotlib."""
-        self._update_size(self.matrix_units_vectors, self.vector_list)
+        self._update_size(self.matrix_units_vectors, self.vector_list.values())
         self._label_axis(self.max_coordinates)
         self._print_vector_info()
         plt.show()

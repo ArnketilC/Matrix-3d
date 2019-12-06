@@ -8,16 +8,24 @@ def main():
     """Entrer le code ici."""
 
     """Exemple de transformations."""
-    transformation = [1, 0, 2], [-1, -1, 0], [0, 2, 1]
-    # transformation = [1, 0, 0], [0, 1, 0], [0, 0, 1]
+    # transformation = [1, 0, 2], [-1, -1, 0], [0, 2, 1]
+    transformation = [1, 0, 0], [0, 1, 0], [0, 0, 1]
 
     """Création du repere."""
     cart = repere(trans_matrix=transformation)
 
     """Exemple de vecteurs."""
-    cart.draw_vector([2, 2, 2], det=True, comp=True)
-    cart.draw_vector([-1, 2, -2], det=True, comp=True)
-    cart.draw_vector([2, -1, 1], det=True, comp=True)
+    cart.new_vector([2, 2, 2])
+    cart.new_vector([-1, 2, -2])
+    # cart.draw_vector('V1', comp=True, det=True)
+    # cart.draw_vector('V2', fade=False)
+
+    # cart.draw_vector('V1', fade=True)
+    # cart.draw_vector('V2', fade=True)
+
+    """Exemple addition vectorielle."""
+    cart.add_vector('V1', 'V2')
+    cart.draw_vector('V1 + V2', added=True)
 
     cart.show()
 
