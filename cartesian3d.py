@@ -43,6 +43,7 @@ class Vector():
         """Construct the vector object."""
         x, y, z = coordinates
         self.units_vectors = units_vectors
+        self.coordinates_untrans = coordinates
         self.coordinates = self._get_true_coordinate(coordinates)
         self.components = self._get_components(coordinates)
         self.name = name
@@ -277,12 +278,13 @@ class Cartesian():
         self.vector_list[name] = vector
         return vector
 
-    def draw_vector(self, vector_name, color='k', det=False, comp=False, fade=False, added=False, no_name=False):
+    def draw_vector(self, vector_name, color='k', det=False, comp=False,
+                    fade=False, added=False, no_name=False):
         """Draw units vectors."""
         vector = ''
         alpha = True
         linestyle = '-'
-        arrowstyle='-|>'
+        arrowstyle ='-|>'
 
         try:
             vector = self.vector_list[vector_name]
@@ -290,9 +292,9 @@ class Cartesian():
             raise EnvironmentError
 
         if fade is True:
-            alpha = 0.5
-            linestyle='--'
-            arrowstyle='->'
+            alpha = 0.7
+            linestyle ='--'
+            arrowstyle ='->'
 
         arrow_prop_dict = dict(
             mutation_scale=20,
@@ -339,11 +341,11 @@ class Cartesian():
             shrinkA=0,
             shrinkB=0,
             color='k',
-            alpha=0.5
+            alpha=0.7
             )
         a = Arrow3D(
                 [v1.coordinates[0], v1.coordinates[0] + v2.coordinates[0]],
-                [v1.coordinates[1], v1.coordinates[2] + v2.coordinates[1]],
+                [v1.coordinates[1], v1.coordinates[1] + v2.coordinates[1]],
                 [v1.coordinates[2], v1.coordinates[2] + v2.coordinates[2]],
                 **arrow_prop_dict
                  )
@@ -352,7 +354,7 @@ class Cartesian():
                 self.draw_vector(v2.name, no_name=True, fade=True, color='k')
                 a = Arrow3D(
                     [v2.coordinates[0], v1.coordinates[0] + v2.coordinates[0]],
-                    [v2.coordinates[1], v1.coordinates[2] + v2.coordinates[1]],
+                    [v2.coordinates[1], v1.coordinates[1] + v2.coordinates[1]],
                     [v2.coordinates[2], v1.coordinates[2] + v2.coordinates[2]],
                     **arrow_prop_dict
                     )
@@ -368,8 +370,8 @@ class Cartesian():
         v3_coordinates = []
 
         try:
-            v1_coordinates = self.vector_list[v1].coordinates
-            v2_coordinates = self.vector_list[v2].coordinates
+            v1_coordinates = self.vector_list[v1].coordinates_untrans
+            v2_coordinates = self.vector_list[v2].coordinates_untrans
         except:
             raise  EnvironmentError
         
