@@ -44,14 +44,14 @@ class Vector():
         x, y, z = coordinates
         self.units_vectors = units_vectors
         self.coordinates_untrans = coordinates
-        self.coordinates = self._get_true_coordinate(coordinates)
-        self.components = self._get_components(coordinates)
+        self.coordinates = self.__get_true_coordinate(coordinates)
+        self.components = self.__get_components(coordinates)
         self.name = name
-        self.determinent = self._get_determinent()
-        self.norme = self._get_norme()
+        self.determinent = self.__get_determinent()
+        self.norme = self.__get_norme()
         self.drawn = False
 
-    def _get_components(self, coordinates):
+    def __get_components(self, coordinates):
         """Return components of the vector in the space."""
         components_list = [[], [], []]
         for i, unit_verctor in enumerate(self.units_vectors):
@@ -59,21 +59,21 @@ class Vector():
                 components_list[i].append(coordinates[i] * unit_verctor[coord])
         return components_list
 
-    def _get_norme(self):
+    def __get_norme(self):
         """Return the norme of the vector in the space."""
         array = np.array(self.components)
         norme = round(linalg.norm(array), 3)
         return norme
 
-    def _get_true_coordinate(self, coordinates):
+    def __get_true_coordinate(self, coordinates):
         """Return coordinates of the vector in the space."""
         new_coordinates = [0, 0, 0]
         for i, unit_verctor in enumerate(self.units_vectors):
             for j, coord in enumerate(unit_verctor):
-                new_coordinates[j] = new_coordinates[j] + coordinates[i] * coord
+                new_coordinates[j] += coordinates[i] * coord
         return new_coordinates
 
-    def _get_determinent(self):
+    def __get_determinent(self):
         array = np.array(self.components)
         determinent = round(linalg.det(array),3)
         return determinent
@@ -96,21 +96,21 @@ class Cartesian():
             matrix_units_vectors = trans_matrix
 
         if draw_unit == 1:
-            self._draw_units(matrix_units_vectors)
+            self.__draw_units(matrix_units_vectors)
 
         self.matrix_units_vectors = matrix_units_vectors
 
-    def _draw_units(self, matrix_units_vectors):
+    def __draw_units(self, matrix_units_vectors):
         """Draw unit vvector and determinent."""
-        self._draw_unit_determinent(matrix_units_vectors)
-        self._draw_units_vector(matrix_units_vectors)
+        self.__draw_unit_determinent(matrix_units_vectors)
+        self.__draw_units_vector(matrix_units_vectors)
 
-    def _update_size(self, unit_list=[], vector_list=[]):
+    def __update_size(self, unit_list=[], vector_list=[]):
         """Update the size of the cartesian space."""
         all_vectors = []
         for vector in unit_list:
             all_vectors.append(vector)
-     
+
         for vector in vector_list:
             if vector.drawn == True:
                 all_vectors.append(vector.coordinates)
@@ -132,20 +132,20 @@ class Cartesian():
                     plus = abs(minus)
                 self.max_coordinates[i][0] = minus
                 self.max_coordinates[i][1] = plus
-        self._draw_axis(self.max_coordinates)
+        self.__draw_axis(self.max_coordinates)
 
-    def _draw_unit_determinent(self, matrix_units_vectors):
+    def __draw_unit_determinent(self, matrix_units_vectors):
         """Add the unit deteminent."""
-        X, Y, Z = self._get_deteminent_array(matrix_units_vectors)
+        X, Y, Z = self.__get_deteminent_array(matrix_units_vectors)
         self.ax1.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.07)
 
-    def _draw_determinent(self, matrix_vector):
+    def __draw_determinent(self, matrix_vector):
         """Add the deteminent."""
-        X, Y, Z = self._get_deteminent_array(matrix_vector)
+        X, Y, Z = self.__get_deteminent_array(matrix_vector)
         self.ax1.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.07)
 
-    def _get_deteminent_array(self, matrix_vectors):
-        """Get numpy array to pass in plot_surface method to display determinent."""
+    def __get_deteminent_array(self, matrix_vectors):
+        """Get determinent as numpy array to pass in plot_surface method."""
         i = matrix_vectors[0]
         j = matrix_vectors[1]
         k = matrix_vectors[2]
@@ -173,7 +173,7 @@ class Cartesian():
 
         return x, y, z
 
-    def _draw_axis(self, size):
+    def __draw_axis(self, size):
         """Add axis and draw the doted axis."""
         """Draw the axis."""
         self.ax1.set_xlabel('X')
@@ -199,14 +199,14 @@ class Cartesian():
         a = Arrow3D([0, 0], [0, 0], size[2], **arrow_prop_dict)
         self.ax1.add_artist(a)
 
-    def _label_axis(self, size):
+    def __label_axis(self, size):
         """Label the axis."""
         self.ax1.text(0.0, 0.0, -0.3, r'$0$')
         self.ax1.text(size[0][1], 0, 0, r'$X$')
         self.ax1.text(0, size[1][1], 0, r'$Y$')
         self.ax1.text(0, 0, size[2][1], r'$Z$')
 
-    def _draw_units_vector(self, matrix_units_vectors):
+    def __draw_units_vector(self, matrix_units_vectors):
         """Draw units vectors."""
         arrow_prop_dict = dict(
             mutation_scale=20,
@@ -215,20 +215,19 @@ class Cartesian():
             shrinkB=0
             )
 
-        self._draw_components_vectors(
+        self.__draw_components_vectors(
             matrix_units_vectors,
             arrow_prop_dict,
             unit=True
             )
 
         """Label unit vectors."""
-        # delta_size = abs(self.size[0][0]) + abs(self.size[0][1])
         self.ax1.text(0.0, 0.0, -0.3, r'$0$')
         self.ax1.text(0.7, 0, -0.2, r'$i$', color='r')
         self.ax1.text(-0.2, 0.7, 0, r'$j$', color='b')
         self.ax1.text(0, -0.2, 0.7, r'$k$', color='g')
 
-    def _draw_components_vectors(self, vector_matrix, arrow_prop_dict, unit=0):
+    def __draw_components_vectors(self, vector_matrix, arrow_prop_dict, unit=0):
         """Draw units vectors."""
         arrow_prop_dict = dict(
             mutation_scale=20,
@@ -241,8 +240,8 @@ class Cartesian():
             color = ['r', 'b', 'g']
         else:
             color = ['k', 'k', 'k']
-            arrow_prop_dict['linestyle'] = '--'
-            arrow_prop_dict['alpha'] = 0.2
+            arrow_prop_dict['linestyle'] = ':'
+            arrow_prop_dict['alpha'] = 0.7
 
         a = ArrowFromOrigin(
             vector_matrix[0],
@@ -292,9 +291,9 @@ class Cartesian():
             raise EnvironmentError
 
         if fade is True:
-            alpha = 0.7
-            linestyle ='--'
-            arrowstyle ='->'
+            alpha = 0.5
+            linestyle = '-.'
+            arrowstyle = '-|>'
 
         arrow_prop_dict = dict(
             mutation_scale=20,
@@ -318,9 +317,9 @@ class Cartesian():
         if added is True:
             self.draw_added_vector(vector)
         if comp is True:
-            self._draw_components_vectors(vector.components, arrow_prop_dict)
+            self.__draw_components_vectors(vector.components, arrow_prop_dict)
         if det is True:
-            self._draw_determinent(vector.components)
+            self.__draw_determinent(vector.components)
         self.vector_list[vector_name].drawn = True
 
     def draw_added_vector(self, vector):
@@ -363,7 +362,7 @@ class Cartesian():
 
         self.ax1.add_artist(a)
 
-    def add_vector(self, v1, v2):
+    def add_vector(self, v1, v2, name=''):
         """Add 2 vector to create a third vector."""
         v1_coordinates = []
         v2_coordinates = []
@@ -373,15 +372,17 @@ class Cartesian():
             v1_coordinates = self.vector_list[v1].coordinates_untrans
             v2_coordinates = self.vector_list[v2].coordinates_untrans
         except:
-            raise  EnvironmentError
-        
+            raise EnvironmentError
+
         for value in range(len(v1_coordinates)):
             v3_coordinates.append(
                 v1_coordinates[value] + v2_coordinates[value])
-        
-        name = '{} + {}'.format(
-            self.vector_list[v1].name, 
-            self.vector_list[v2].name)
+        if name == '':
+            name = '{} + {}'.format(
+                self.vector_list[v1].name,
+                self.vector_list[v2].name)
+        else:
+            name = name
         self.new_vector(v3_coordinates, name=name)
 
         self.additions_list[name] = [v1, v2]
@@ -434,8 +435,8 @@ Vector determinent  =   {}
 
     def show(self):
         """Show the cartesian space in maplotlib."""
-        self._update_size(self.matrix_units_vectors, self.vector_list.values())
-        self._label_axis(self.max_coordinates)
+        self.__update_size(self.matrix_units_vectors, self.vector_list.values())
+        self.__label_axis(self.max_coordinates)
         self._print_vector_info()
         plt.show()
         plt.close(self.fig)
