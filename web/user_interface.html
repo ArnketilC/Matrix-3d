@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matrix 3d visualisation</title>
+</head>
+<style>
+        table {width: fit-content}
+        .matrix {width: 40px}}
+        /* tr:hover {background-color:cornflowerblue;}
+        tr:nth-child(even) {background-color: cornflowerblue;} 
+        p:nth-child(even) {background-color: cornflowerblue;} */
+        div{}
+        .wrapper{
+            display:grid;
+            grid-template-columns: 50% 50%;
+        }
+</style>
+<script type="text/javascript" src="/eel.js"></script>
+<body>
+    <div>
+        <h1>Matrix 3d visualisation</h1>
+    </div>
+    <div class="wrapper">
+    <div>
+        <h2>Transformation</h2>
+        <p>What transformation will you apply to the vector space ?</p>
+        <table class="matrix">
+            <tr><th colspan="3">Matrix</th></tr>
+            <tr>
+                <td><input class="matrix" name="t00" value="1"></td>
+                <td><input class="matrix" name="t01" value="0"></td>
+                <td><input class="matrix" name="t02" value="0"></td>
+            </tr>
+            <tr>
+                <td><input class="matrix" name="t10" value="0"></td>
+                <td><input class="matrix" name="t11" value="1"></td>
+                <td><input class="matrix" name="t12" value="0"></td></tr>
+            <tr>
+                <td><input class="matrix" name="t20" value="0"></td>
+                <td><input class="matrix" name="t21" value="0"></td>
+                <td><input class="matrix" name="t22" value="1"></td>
+            </tr> 
+    
+        </table>
+        <input type="button" name="bp_transform" value="Transform space">
+    </div>
+
+ 
+    <div>
+        <h2>Vector list</h2>
+        <table>
+            <tr>
+                <td>Vector1</td>
+                <td><input type="checkbox" name="v_show" checked>Show<br></td>
+                <td><input type="checkbox" name="v_name" checked>Name<br></td>
+                <td><input type="checkbox" name="v_det">Determinant<br></td>
+                <td><input type="checkbox" name="v_comp">Component<br></td>
+            </tr>
+        </table>
+        <input type="button" name="vehicle1" value="Show vectors">
+        </div>
+    <div>
+        <h2>New vectors</h2>
+        <p>What vectors will you add to the cartesian space ?</p>
+        <table>
+            <th>Coordinates</th>
+            <td><input class="matrix" name="personne"><br><input class="matrix" name="personne"><br><input class="matrix" name="personne"></td>
+        </table>
+        Vector name : <input name="vehicle1"><br>
+        <input type="button" name="vehicle1" value="Add vector">
+    </div>
+    <div>
+        <h2>Vectors addition</h2>
+        <p>What vectors will you add together ?</p>
+
+        <table>
+                <td><input name="personne"> + <input name="personne"></td>
+        </table>
+        <input type="button" name="vehicle1" value="Add vectors">
+    </div>
+
+    </div>
+
+</body>
+</html>
