@@ -30,8 +30,8 @@ def main():
     cart.draw_vector('V2', fade=True)
     cart.draw_vector('V1,2', fade=True)
     cart.draw_vector('V1 + V1,2', det=True, comp=True, added=True, color='c')
-
-    cart.show()
+    
+    cart.show(print_info=True)
 
 
 if __name__ == '__main__':

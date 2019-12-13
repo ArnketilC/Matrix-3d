@@ -387,9 +387,20 @@ class Cartesian():
 
         self.additions_list[name] = [v1, v2]
 
-    def _print_vector_info(self):
+    def __print_vector_info(self, print_info=False):
         """Print vector info in the terminal."""
-        print('''
+        list_string_info = self.__get_strings_info()
+        print(list_string_info)
+        for info in list_string_info:
+            print(info)
+            if print_info is True:
+                with open('vectors_info.txt', 'a') as vector_file:
+                    vector_file.write(info)
+
+    def __get_strings_info(self):
+        """Get all info from all vectors and return a string."""
+        list_info = []
+        info = '''
 ----------------------------------------
 ----------------------------------------
                 RESOLUTION
@@ -403,7 +414,8 @@ Units vectors :
             self.matrix_units_vectors[0], 
             self.matrix_units_vectors[1], 
             self.matrix_units_vectors[2])
-            )
+
+        list_info.append(info)
 
         for vector in self.vector_list.values():
             vector_info = [
@@ -413,7 +425,7 @@ Units vectors :
                 vector.components,
                 vector.determinent]
 
-            print('''
+            info = '''
 ----------------------------------------
 Vector name         =   {}
 Vector coodinates   =   {}
@@ -431,13 +443,15 @@ Vector determinent  =   {}
                 vector_info[3][1],
                 vector_info[3][2],
                 vector_info[4])
-                )
+            list_info.append(info)
 
-    def show(self):
+        return list_info
+
+    def show(self, print_info=False):
         """Show the cartesian space in maplotlib."""
         self.__update_size(self.matrix_units_vectors, self.vector_list.values())
         self.__label_axis(self.max_coordinates)
-        self._print_vector_info()
+        self.__print_vector_info(print_info=print_info)
         plt.show()
         plt.close(self.fig)
 
